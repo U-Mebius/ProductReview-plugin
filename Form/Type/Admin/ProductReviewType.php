@@ -19,6 +19,7 @@ use Plugin\ProductReview4\Entity\ProductReviewStatus;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -55,6 +56,21 @@ class ProductReviewType extends AbstractType
     {
         $config = $this->eccubeConfig;
         $builder
+            ->add('create_date', DateTimeType::class, [
+                'label' => '投稿日',
+                'constraints' => [
+                    new Assert\NotBlank(),
+                ],
+                'required' => false,
+                'input' => 'datetime',
+                'widget' => 'single_text',
+                'format' => 'yyyy-MM-dd HH:mm:ss',
+                'attr' => [
+                    'class' => 'datetimepicker-input',
+                    'data-target' => '#'.$this->getBlockPrefix().'_create_date',
+                    'data-toggle' => 'datetimepicker',
+                ],
+            ])
             ->add('Status', EntityType::class, [
                 'class' => ProductReviewStatus::class,
                 'constraints' => [

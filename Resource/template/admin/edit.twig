@@ -21,8 +21,45 @@
 
 {% form_theme form '@admin/Form/bootstrap_4_horizontal_layout.html.twig' %}
 
-{% block main %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{{ asset('assets/css/tempusdominus-bootstrap-4.min.css', 'admin') }}">
+{% endblock %}
 
+{% block javascript %}
+<script>
+    $(function () {
+        $.when(
+            $.getScript("{{ asset('assets/js/vendor/moment.min.js', 'admin') }}"),
+                $.getScript("{{ asset('assets/js/vendor/moment-with-locales.min.js', 'admin') }}"),
+                $.getScript("{{ asset('assets/js/vendor/tempusdominus-bootstrap-4.min.js', 'admin') }}")
+            ).done(function() {
+                // datetimepicker で value が消えてしまうので data-value に保持しておく
+                $('input.datetimepicker-input').each(function() {
+                    $(this).data('value', $(this).val());
+                });
+
+                $('input.datetimepicker-input').datetimepicker({
+                    locale: '{{ eccube_config.locale }}',
+                    format: 'YYYY-MM-DD HH:mm:ss',
+                    useCurrent: false,
+                    buttons: {
+                        showToday: true,
+                        showClose: true
+                    },
+                });
+
+                // datetimepicker で value が消えてしまうので更新
+                $('input.datetimepicker-input').each(function() {
+                    $(this).val($(this).data('value'));
+                });
+            });
+
+    })
+
+</script>
+
+{% endblock %}
+{% block main %}
     <form role="form" method="post"
           action="{{ url('product_review_admin_product_review_edit', { id : ProductReview.id }) }}">
         {{ form_widget(form._token) }}
@@ -64,7 +101,8 @@
                                         <span>{{ 'product_review.admin.product_review_edit.posted_date'|trans }}</span>
                                     </div>
                                     <div class="col">
-                                        {{ ProductReview.create_date|date_min }}
+                                        {{ form_widget(form.create_date) }}
+                                        {{ form_errors(form.create_date) }}
                                     </div>
                                 </div>
 
