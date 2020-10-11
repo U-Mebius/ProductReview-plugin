@@ -57,6 +57,7 @@ class ProductReviewEvent implements EventSubscriberInterface
     {
         return [
             'Product/detail.twig' => 'detail',
+            'Product/list.twig' => 'onProductListTwig',
         ];
     }
 
@@ -83,5 +84,21 @@ class ProductReviewEvent implements EventSubscriberInterface
         $parameters['ProductReviewAvg'] = $avg;
         $parameters['ProductReviewCount'] = $count;
         $event->setParameters($parameters);
+    }
+
+    /**
+     * @param TemplateEvent $event
+     */
+    public function onProductListTwig(TemplateEvent $event)
+    {
+        $data = [];
+        foreach ($event->getParameter('pagination') as $Product) {
+            $rate = $this->productReviewRepository->getAvgAll($Product);
+            $data[$Product->getId()] = $rate;
+        }
+
+        $event->setParameter('reviewData', $data);
+
+//        {{ include('@ProductReview4/default/review_product_list.twig', {}, ignore_missing = true) }} でProduct/list.twigから読み込む想定
     }
 }

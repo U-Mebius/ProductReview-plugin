@@ -1,0 +1,43 @@
+
+{#
+/*
+ * This file is part of the ProductReview plugin
+ *
+ * Copyright (C) 2016 LOCKON CO.,LTD. All Rights Reserved.
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+#}
+
+{% import _self as stars %}
+
+{# 星テキスト生成用マクロ #}
+{% macro stars(positive, negative) %}
+    {% set positive_stars = ["", "★", "★★", "★★★", "★★★★", "★★★★★"] %}
+    {% set negative_stars = ["", "☆", "☆☆", "☆☆☆", "☆☆☆☆", "☆☆☆☆☆"] %}
+    {{ positive_stars[positive] }}{{ negative_stars[negative] }}
+{% endmacro %}
+
+<style type="text/css">
+    .recommend_average {
+        color: #DE5D50;
+    }
+
+</style>
+
+{% if reviewData[Product.id] is defined %}
+{% set data = reviewData[Product.id] %}
+<!--▼レビューエリア-->
+<div>
+        {% set positive_avg_star = data.recommend_avg|round %}
+        {% set nagative_avg_star = 5 - positive_avg_star %}
+        <div>
+            <!--平均の星の数-->
+            <span class="recommend_average">{{ stars.stars(positive_avg_star, nagative_avg_star) }}</span>
+            <!--レビュー数-->
+            <span>({{ data.review_count }})</span>
+        </div>
+</div>
+<!-- ▲レビューエリア -->
+{% endif %}
