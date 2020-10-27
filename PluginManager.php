@@ -155,7 +155,7 @@ class PluginManager extends AbstractPluginManager
         $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
         $Page->setName($name);
         $Page->setUrl($url);
-        $Page->setFileName('@ProductReview4/default/index');
+        $Page->setFileName('ProductReview4/Resource/template/default/index');
 
         // DB登録
         $em->persist($Page);
