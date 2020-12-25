@@ -31,8 +31,16 @@ class PluginManager extends AbstractPluginManager
      * @var array
      */
     private $urls = [
-        'product_review_index' => 'レビューを投稿',
-        'product_review_complete' => 'レビューを投稿(完了)',
+        [
+            'url' => 'product_review_index',
+            'name' => 'レビューを投稿',
+            'file_name' => 'ProductReview4/Resource/template/default/index',
+        ],
+        [
+            'url' => 'product_review_complete',
+            'name' => 'レビューを投稿(完了)',
+            'file_name' => 'ProductReview4/Resource/template/default/complete',
+        ],
     ];
 
     public function enable(array $meta, ContainerInterface $container)
@@ -56,10 +64,10 @@ class PluginManager extends AbstractPluginManager
         }
 
         // ページを追加
-        foreach ($this->urls as $url => $name) {
-            $Page = $container->get(PageRepository::class)->findOneBy(['url' => $url]);
+        foreach ($this->urls as $row) {
+            $Page = $container->get(PageRepository::class)->findOneBy(['url' => $row['url']]);
             if (null === $Page) {
-                $this->createPage($em, $name, $url);
+                $this->createPage($em, $row);
             }
         }
     }
@@ -149,13 +157,13 @@ class PluginManager extends AbstractPluginManager
         return $CsvType;
     }
 
-    protected function createPage(EntityManagerInterface $em, $name, $url)
+    protected function createPage(EntityManagerInterface $em, $row)
     {
         $Page = new Page();
         $Page->setEditType(Page::EDIT_TYPE_DEFAULT);
-        $Page->setName($name);
-        $Page->setUrl($url);
-        $Page->setFileName('ProductReview4/Resource/template/default/index');
+        $Page->setName($row['name']);
+        $Page->setUrl($row['url']);
+        $Page->setFileName($row['file_name']);
 
         // DB登録
         $em->persist($Page);
